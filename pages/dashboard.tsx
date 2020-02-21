@@ -1,19 +1,44 @@
 import {useContext} from 'react';
-import Context from '../src/context';
+import {Context, SidebarOptions} from '../src/context';
 import {DefaultSeo} from "next-seo";
 import SEO from "../next-seo.config";
+import Sidebar from '../src/components/global/Sidebar/Sidebar';
+import Navigation from '../src/components/global/Navigation/Navigation';
 
 function Dashboard() {
-  const {user} = useContext(Context);
+  const context = useContext(Context);
+  const {user, sidebarIsOpen} = context;
+  const {account, main} = SidebarOptions; // TODO: add ability to save data into DB and retrieve for menu generaetion
+
+  const onNavigate = (path: string) => {
+    // can pass the router here
+    console.log(`Navigating to ${path}`);
+  };
 
   return (
-    <div className="uk-container uk-margin-large-top">
+    <main>
+      {console.log(context.sidebarIsOpen)}
+      <Navigation/>
+      <section>
+        {/* // TODO: Need to make it so we just need to call <Sidebar> - low priority. */}
+        <Sidebar
+          accountMenuItems={account}
+          menuItems={main}
+          isOpen={sidebarIsOpen}
+          closeButtonScreenSize={"l"}
+          onNavigate={(path) => onNavigate(path)}
+        />
+        <div className="uk-container" >
+          <section className="uk-padding">
+            <h1>Hello {user}!</h1>
+          </section>
+        </div>
+      </section>
       <DefaultSeo {...Object.assign(SEO, {
         title: `${user} - dashboard`,
       })}
       />
-      <h1>Hello {user}!</h1>
-    </div>
+    </main>
   );
 }
 
